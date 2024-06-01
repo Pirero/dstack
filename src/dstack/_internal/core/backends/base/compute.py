@@ -222,6 +222,14 @@ def get_docker_commands(
     runner = "/usr/local/bin/dstack-runner"
 
     build = get_dstack_runner_version()
+    env_s3_runner_url = os.getenv("S3_RUNNER_URL")
+    if env_s3_runner_url:
+        url = env_s3_runner_url
+    else:
+        bucket = "dstack-runner-downloads-stgn"
+        if settings.DSTACK_VERSION is not None:
+            bucket = "dstack-runner-downloads"
+        url = f"https://{bucket}.s3.eu-west-1.amazonaws.com/{build}/binaries/dstack-runner-linux-amd64"
     bucket = "dstack-runner-downloads-stgn"
     if settings.DSTACK_VERSION is not None:
         bucket = "dstack-runner-downloads"
