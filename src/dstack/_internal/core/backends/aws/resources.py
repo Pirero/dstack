@@ -154,16 +154,16 @@ def create_instances_struct(
     return struct
 
 
-def get_gateway_image_id(ec2_client: botocore.client.BaseClient) -> str:
+def get_gateway_image_id(ec2_client: botocore.client.BaseClient, name_filter: str = "ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-server-*", owner_alias_filter: str = "amazon") -> str:
     response = ec2_client.describe_images(
         Filters=[
             {
                 "Name": "name",
-                "Values": ["ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-server-*"],
+                "Values": [name_filter],
             },
             {
                 "Name": "owner-alias",
-                "Values": ["amazon"],
+                "Values": [owner_alias_filter],
             },
         ],
     )
