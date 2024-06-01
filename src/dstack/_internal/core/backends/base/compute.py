@@ -276,6 +276,9 @@ def get_latest_runner_build() -> Optional[str]:
 
 
 def get_dstack_gateway_wheel(build: str) -> str:
+     env_gateway_wheel_url = os.getenv("GATEWAY_WHEEL_URL")
+     if env_gateway_wheel_url:
+         return env_gateway_wheel_url
     channel = "release" if settings.DSTACK_RELEASE else "stgn"
     base_url = f"https://dstack-gateway-downloads.s3.amazonaws.com/{channel}"
     if build == "latest":
