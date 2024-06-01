@@ -143,9 +143,9 @@ def get_cloud_config(**config) -> str:
 
 
 def get_shim_pre_start_commands(build: str) -> List[str]:
-    env_gateway_shim_url = os.getenv("GATEWAY_SHIM_URL")
-    if env_gateway_shim_url:
-        url = env_gateway_shim_url
+    env_s3_shim_url = os.getenv("S3_SHIM_URL")
+    if env_s3_shim_url:
+        url = env_s3_shim_url
     else:
         bucket = "dstack-runner-downloads-stgn"
         if settings.DSTACK_VERSION is not None:
