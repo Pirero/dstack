@@ -143,11 +143,14 @@ def get_cloud_config(**config) -> str:
 
 
 def get_shim_pre_start_commands(build: str) -> List[str]:
-    bucket = "dstack-runner-downloads-stgn"
-    if settings.DSTACK_VERSION is not None:
-        bucket = "dstack-runner-downloads"
-
-    url = f"https://{bucket}.s3.eu-west-1.amazonaws.com/{build}/binaries/dstack-shim-linux-amd64"
+    env_gateway_shim_url = os.getenv("GATEWAY_SHIM_URL")
+    if env_gateway_shim_url:
+        url = env_gateway_shim_url
+    else:
+        bucket = "dstack-runner-downloads-stgn"
+        if settings.DSTACK_VERSION is not None:
+            bucket = "dstack-runner-downloads"
+        url = f"https://{bucket}.s3.eu-west-1.amazonaws.com/{build}/binaries/dstack-shim-linux-amd64"
 
     dstack_shim_binary_path = "/usr/local/bin/dstack-shim"
 
