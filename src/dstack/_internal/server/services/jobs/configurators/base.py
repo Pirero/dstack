@@ -41,7 +41,8 @@ def get_default_python_verison() -> str:
 
 def get_default_image(python_version: str) -> str:
     # TODO: non-cuda image
-    return f"dstackai/base:py{python_version}-{version.base_image}-cuda-12.1"
+    return f"truespirit/cuda:12.1.0-base-22.04-py3.12-3-forge"
+    #return f"dstackai/base:py{python_version}-{version.base_image}-cuda-12.1"
 
 
 class JobConfigurator(ABC):

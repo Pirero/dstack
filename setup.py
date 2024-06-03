@@ -119,9 +119,9 @@ setup(
     entry_points={
         "console_scripts": ["dstack=dstack._internal.cli.main:main"],
     },
-    url="https://dstack.ai",
+    url="https://pirero.com",
     project_urls={
-        "Source": "https://github.com/dstackai/dstack",
+        "Source": "https://github.com/Pirero/dstack",
     },
     description="dstack is an open-source orchestration engine for running AI workloads on any cloud or on-premises.",
     long_description=get_long_description(),

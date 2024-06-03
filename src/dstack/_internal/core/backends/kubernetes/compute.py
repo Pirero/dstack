@@ -399,7 +399,7 @@ def _create_jump_pod_service(
                     client.V1Container(
                         name=f"{pod_name}-container",
                         # TODO: Choose appropriate image for jump pod
-                        image="dstackai/base:py3.11-0.4rc4",
+                        image="truespirit/cuda:12.1.0-base-22.04-py3.12-3-forge",
                         command=["/bin/sh"],
                         args=["-c", " && ".join(commands)],
                         ports=[
