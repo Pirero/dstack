@@ -91,7 +91,7 @@ jobs:
       run:
         working-directory: runner
     env:
-      REPO_NAME: https://github.com/Pirero/dstack
+      REPO_NAME: github.com/Pirero/dstack
     strategy:
       matrix:
         include:
