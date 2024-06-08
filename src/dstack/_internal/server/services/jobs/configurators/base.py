@@ -5,7 +5,6 @@ from typing import Dict, List, Optional
 
 from cachetools import TTLCache, cached
 
-import dstack.version as version
 from dstack._internal.core.errors import DockerRegistryError, ServerClientError
 from dstack._internal.core.models.configurations import (
     PortMapping,
@@ -41,8 +40,8 @@ def get_default_python_verison() -> str:
 
 def get_default_image(python_version: str) -> str:
     # TODO: non-cuda image
-    return f"truespirit/cuda:12.1.0-base-22.04-py3.12-3-forge"
-    #return f"dstackai/base:py{python_version}-{version.base_image}-cuda-12.1"
+    return "truespirit/cuda:12.1.0-base-22.04-py3.12-3-forge"
+    # return f"dstackai/base:py{python_version}-{version.base_image}-cuda-12.1"
 
 
 class JobConfigurator(ABC):

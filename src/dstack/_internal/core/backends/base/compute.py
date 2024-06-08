@@ -150,7 +150,9 @@ def get_shim_pre_start_commands(build: str) -> List[str]:
         bucket = "dstack-runner-downloads-stgn"
         if settings.DSTACK_VERSION is not None:
             bucket = "dstack-runner-downloads"
-        url = f"https://{bucket}.s3.eu-west-1.amazonaws.com/{build}/binaries/dstack-shim-linux-amd64"
+        url = (
+            f"https://{bucket}.s3.eu-west-1.amazonaws.com/{build}/binaries/dstack-shim-linux-amd64"
+        )
 
     dstack_shim_binary_path = "/usr/local/bin/dstack-shim"
 
@@ -287,17 +289,17 @@ def get_latest_runner_build() -> Optional[str]:
 
 
 def get_dstack_gateway_wheel(build: str) -> str:
-     env_gateway_wheel_url = os.getenv("S3_GATEWAY_WHEEL_URL")
-     if env_gateway_wheel_url:
-         return env_gateway_wheel_url
-     channel = "release" if settings.DSTACK_RELEASE else "stgn"
-     base_url = f"https://dstack-gateway-downloads.s3.amazonaws.com/{channel}"
-     if build == "latest":
-         r = requests.get(f"{base_url}/latest-version", timeout=5)
-         r.raise_for_status()
-         build = r.text.strip()
-         logger.debug("Found the latest gateway build: %s", build)
-     return f"{base_url}/dstack_gateway-{build}-py3-none-any.whl"
+    env_gateway_wheel_url = os.getenv("S3_GATEWAY_WHEEL_URL")
+    if env_gateway_wheel_url:
+        return env_gateway_wheel_url
+    channel = "release" if settings.DSTACK_RELEASE else "stgn"
+    base_url = f"https://dstack-gateway-downloads.s3.amazonaws.com/{channel}"
+    if build == "latest":
+        r = requests.get(f"{base_url}/latest-version", timeout=5)
+        r.raise_for_status()
+        build = r.text.strip()
+        logger.debug("Found the latest gateway build: %s", build)
+    return f"{base_url}/dstack_gateway-{build}-py3-none-any.whl"
 
 
 def get_dstack_gateway_commands() -> List[str]:

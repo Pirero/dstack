@@ -1,4 +1,5 @@
 import os
+
 from openai import OpenAI
 
 # Get the API key from the environment variable

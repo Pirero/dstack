@@ -1,6 +1,6 @@
+import os
 from typing import Any, Dict, List, Optional
 
-import os
 import botocore.client
 import botocore.exceptions
 
@@ -155,9 +155,13 @@ def create_instances_struct(
     return struct
 
 
-def get_gateway_image_id(ec2_client: botocore.client.BaseClient, name_filter: str = None, owner_alias_filter: str = None) -> str:
+def get_gateway_image_id(
+    ec2_client: botocore.client.BaseClient, name_filter: str = None, owner_alias_filter: str = None
+) -> str:
     if name_filter is None:
-        name_filter = os.getenv("AWS_GATEWAY_AMI", "ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-server-*")
+        name_filter = os.getenv(
+            "AWS_GATEWAY_AMI", "ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-server-*"
+        )
     if owner_alias_filter is None:
         owner_alias_filter = os.getenv("AWS_AMI_OWNER", "amazon")
     response = ec2_client.describe_images(
