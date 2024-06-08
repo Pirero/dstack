@@ -44,7 +44,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python: [ "3.11", "3.12" ]
+        python: [ "3.8", "3.9", "3.10", "3.11", "3.12" ]
     steps:
      - name: Checkout repository
        uses: actions/checkout@v3
@@ -59,11 +59,11 @@ jobs:
        uses: docker/setup-qemu-action@v2
      - name: Build and upload to DockerHub
        run: |
-         docker buildx build --platform linux/arm64/v8 --build-arg PYTHON=${{ matrix.python }} --push --provenance=false --tag truespirit/base:py${{ matrix.python }}-${{ inputs.image_version }}-arm64 -f cpu/Dockerfile .
-         docker buildx build --platform linux/amd64 --build-arg PYTHON=${{ matrix.python }} --push --provenance=false --tag truespirit/base:py${{ matrix.python }}-${{ inputs.image_version }}-amd64 -f cpu/Dockerfile .
-         docker manifest create truespirit/base:py${{ matrix.python }}-${{ inputs.image_version }} --amend truespirit/base:py${{ matrix.python }}-${{ inputs.image_version }}-arm64 --amend truespirit/base:py${{ matrix.python }}-${{ inputs.image_version }}-amd64
-         docker manifest push truespirit/base:py${{ matrix.python }}-${{ inputs.image_version }}
-         docker buildx build --platform linux/amd64 --build-arg PYTHON=${{ matrix.python }} --push --provenance=false --tag truespirit/base:py${{ matrix.python }}-${{ inputs.image_version }}-cuda-12.1 -f cuda/Dockerfile .
+         docker buildx build --platform linux/arm64/v8 --build-arg PYTHON=${{ matrix.python }} --push --provenance=false --tag dstackai/base:py${{ matrix.python }}-${{ inputs.image_version }}-arm64 -f cpu/Dockerfile .
+         docker buildx build --platform linux/amd64 --build-arg PYTHON=${{ matrix.python }} --push --provenance=false --tag dstackai/base:py${{ matrix.python }}-${{ inputs.image_version }}-amd64 -f cpu/Dockerfile .
+         docker manifest create dstackai/base:py${{ matrix.python }}-${{ inputs.image_version }} --amend dstackai/base:py${{ matrix.python }}-${{ inputs.image_version }}-arm64 --amend dstackai/base:py${{ matrix.python }}-${{ inputs.image_version }}-amd64
+         docker manifest push dstackai/base:py${{ matrix.python }}-${{ inputs.image_version }}
+         docker buildx build --platform linux/amd64 --build-arg PYTHON=${{ matrix.python }} --push --provenance=false --tag dstackai/base:py${{ matrix.python }}-${{ inputs.image_version }}-cuda-12.1 -f cuda/Dockerfile .
 
   build-aws-images:
     needs: build-docker

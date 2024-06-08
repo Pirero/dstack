@@ -3,13 +3,13 @@ name: Build
 on:
   push:
     branches:
-      - 'gateway'
+      - 'master'
     paths-ignore:
       - 'docs/**'
       - 'mkdocs.yml'
   pull_request:
     branches:
-      - 'gateway'
+      - 'master'
   workflow_dispatch:
 
 env:
@@ -59,7 +59,7 @@ jobs:
         run: pip install awscli
       - run: |
           VERSION=$((${{ github.run_number }} + ${{ env.BUILD_INCREMENT }}))
-          echo $VERSION | aws s3 cp - s3://pirero-dstack/stgn-cli/latest-version --acl public-read
+          echo $VERSION | aws s3 cp - s3://get-pirero/stgn-cli/latest-version --acl public-read
 
   runner-test:
     defaults:
@@ -111,15 +111,15 @@ jobs:
           CGO_ENABLED: 0
         run: |
           VERSION=$((${{ github.run_number }} + ${{ env.BUILD_INCREMENT }}))
-          go build -ldflags "-X 'main.Version=$VERSION' -extldflags '-static'" -o pirero-runner-$GOOS-$GOARCH $REPO_NAME/runner/cmd/runner
-          go build -ldflags "-X 'main.Version=$VERSION' -extldflags '-static'" -o pirero-shim-$GOOS-$GOARCH $REPO_NAME/runner/cmd/shim
+          go build -ldflags "-X 'main.Version=$VERSION' -extldflags '-static'" -o dstack-runner-$GOOS-$GOARCH $REPO_NAME/runner/cmd/runner
+          go build -ldflags "-X 'main.Version=$VERSION' -extldflags '-static'" -o dstack-shim-$GOOS-$GOARCH $REPO_NAME/runner/cmd/shim
           echo $VERSION
       - uses: actions/upload-artifact@v3
         with:
-          name: pirero-runner
+          name: dstack-runner
           path: |
-            runner/pirero-runner-${{ matrix.goos }}-${{ matrix.goarch }}
-            runner/pirero-shim-${{ matrix.goos }}-${{ matrix.goarch }}
+            runner/dstack-runner-${{ matrix.goos }}-${{ matrix.goarch }}
+            runner/dstack-shim-${{ matrix.goos }}-${{ matrix.goarch }}
           retention-days: 1
 
   runner-upload:
@@ -132,7 +132,7 @@ jobs:
       - name: Download Runner
         uses: actions/download-artifact@v3
         with:
-          name: pirero-runner
+          name: dstack-runner
           path: runner
       - name: Upload to S3
         working-directory: runner
@@ -141,8 +141,8 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         run: |
           VERSION=$((${{ github.run_number }} + ${{ env.BUILD_INCREMENT }}))
-          aws s3 cp . "s3://pirero-runner-downloads-stgn/$VERSION/binaries/" --recursive --exclude "*" --include "dstack-*" --acl public-read
-          aws s3 cp . "s3://pirero-runner-downloads-stgn/latest/binaries/" --recursive --exclude "*" --include "dstack-*" --acl public-read
+          aws s3 cp . "s3://dstack-runner-downloads-stgn/$VERSION/binaries/" --recursive --exclude "*" --include "dstack-*" --acl public-read
+          aws s3 cp . "s3://dstack-runner-downloads-stgn/latest/binaries/" --recursive --exclude "*" --include "dstack-*" --acl public-read
 
   generate-json-schema:
     if: github.event.pull_request.head.repo.full_name == github.repository
@@ -167,10 +167,10 @@ jobs:
       - name: Upload json schema to S3
         run: |
           VERSION=$((${{ github.run_number }} + ${{ env.BUILD_INCREMENT }}))
-          aws s3 cp configuration.json "s3://pirero-runner-downloads-stgn/$VERSION/schemas/configuration.json" --acl public-read
-          aws s3 cp configuration.json "s3://pirero-runner-downloads-stgn/latest/schemas/configuration.json" --acl public-read
-          aws s3 cp profiles.json "s3://pirero-runner-downloads-stgn/$VERSION/schemas/profiles.json" --acl public-read
-          aws s3 cp profiles.json "s3://pirero-runner-downloads-stgn/latest/schemas/profiles.json" --acl public-read
+          aws s3 cp configuration.json "s3://dstack-runner-downloads-stgn/$VERSION/schemas/configuration.json" --acl public-read
+          aws s3 cp configuration.json "s3://dstack-runner-downloads-stgn/latest/schemas/configuration.json" --acl public-read
+          aws s3 cp profiles.json "s3://dstack-runner-downloads-stgn/$VERSION/schemas/profiles.json" --acl public-read
+          aws s3 cp profiles.json "s3://dstack-runner-downloads-stgn/latest/schemas/profiles.json" --acl public-read
 
   gateway-build:
     if: github.event.pull_request.head.repo.full_name == github.repository
@@ -200,5 +200,5 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         run: |
           WHEEL=dstack_gateway-${{ env.VERSION }}-py3-none-any.whl
-          aws s3 cp dist/$WHEEL "s3://pirero-gateway-downloads/stgn/$WHEEL"
-          echo "${{ env.VERSION }}" | aws s3 cp - "s3://pirero-gateway-downloads/stgn/latest-version"
+          aws s3 cp dist/$WHEEL "s3://dstack-gateway-downloads/stgn/$WHEEL"
+          echo "${{ env.VERSION }}" | aws s3 cp - "s3://dstack-gateway-downloads/stgn/latest-version"

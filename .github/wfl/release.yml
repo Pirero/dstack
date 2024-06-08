@@ -93,14 +93,14 @@ jobs:
           CGO_ENABLED: 0
         run: |
           VERSION=${GITHUB_REF#refs/tags/}
-          go build -ldflags "-X '$REPO_NAME/runner/cmd/runner/version.Version=$VERSION' -extldflags '-static'" -o pirero-runner-$GOOS-$GOARCH $REPO_NAME/runner/cmd/runner
-          go build -ldflags "-X '$REPO_NAME/runner/cmd/shim/version.Version=$VERSION' -extldflags '-static'" -o pirero-shim-$GOOS-$GOARCH $REPO_NAME/runner/cmd/shim
+          go build -ldflags "-X '$REPO_NAME/runner/cmd/runner/version.Version=$VERSION' -extldflags '-static'" -o dstack-runner-$GOOS-$GOARCH $REPO_NAME/runner/cmd/runner
+          go build -ldflags "-X '$REPO_NAME/runner/cmd/shim/version.Version=$VERSION' -extldflags '-static'" -o dstack-shim-$GOOS-$GOARCH $REPO_NAME/runner/cmd/shim
       - uses: actions/upload-artifact@v3
         with:
-          name: pirero-runner
+          name: dstack-runner
           path: |
-            runner/pirero-runner-${{ matrix.goos }}-${{ matrix.goarch }}
-            runner/pirero-shim-${{ matrix.goos }}-${{ matrix.goarch }}
+            runner/dstack-runner-${{ matrix.goos }}-${{ matrix.goarch }}
+            runner/dstack-shim-${{ matrix.goos }}-${{ matrix.goarch }}
 
   runner-upload:
     needs: [gateway-build, runner-compile]
@@ -111,7 +111,7 @@ jobs:
       - name: Download Runner
         uses: actions/download-artifact@v3
         with:
-          name: pirero-runner
+          name: dstack-runner
           path: runner
       - name: Upload to S3
         working-directory: runner
@@ -120,8 +120,8 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         run: |
           VERSION=${GITHUB_REF#refs/tags/}
-          aws s3 cp . "s3://pirero-runner-downloads/$VERSION/binaries/" --recursive --exclude "*" --include "dstack-*" --acl public-read
-          aws s3 cp . "s3://pirero-runner-downloads/latest/binaries/" --recursive --exclude "*" --include "dstack-*" --acl public-read
+          aws s3 cp . "s3://dstack-runner-downloads/$VERSION/binaries/" --recursive --exclude "*" --include "dstack-*" --acl public-read
+          aws s3 cp . "s3://dstack-runner-downloads/latest/binaries/" --recursive --exclude "*" --include "dstack-*" --acl public-read
 
   pypi-upload:
     needs: [ python-test, runner-upload ]
@@ -167,7 +167,7 @@ jobs:
         run: pip install awscli
       - run: |
           VERSION=${GITHUB_REF#refs/tags/}
-          echo $VERSION | aws s3 cp - s3://get-pirero/cli/latest-version --acl public-read
+          echo $VERSION | aws s3 cp - s3://get-dstack/cli/latest-version --acl public-read
 
   server-docker-upload:
     needs: [ pypi-upload ]
@@ -228,11 +228,11 @@ jobs:
       - name: Upload json schema to S3
         run: |
           VERSION=${GITHUB_REF#refs/tags/}
-          aws s3 cp configuration.json "s3://pirero-runner-downloads/$VERSION/schemas/configuration.json" --acl public-read
-          aws s3 cp profiles.json "s3://pirero-runner-downloads/$VERSION/schemas/profiles.json" --acl public-read      
+          aws s3 cp configuration.json "s3://dstack-runner-downloads/$VERSION/schemas/configuration.json" --acl public-read
+          aws s3 cp profiles.json "s3://dstack-runner-downloads/$VERSION/schemas/profiles.json" --acl public-read      
           if [ -n "${{ needs.pypi-upload.outputs.LATEST }}" ]; then
-            aws s3 cp configuration.json "s3://pirero-runner-downloads/latest/schemas/configuration.json" --acl public-read
-            aws s3 cp profiles.json "s3://pirero-runner-downloads/latest/schemas/profiles.json" --acl public-read
+            aws s3 cp configuration.json "s3://dstack-runner-downloads/latest/schemas/configuration.json" --acl public-read
+            aws s3 cp profiles.json "s3://dstack-runner-downloads/latest/schemas/profiles.json" --acl public-read
           fi
 
   gateway-build:
@@ -262,5 +262,5 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         run: |
           WHEEL=dstack_gateway-${{ env.VERSION }}-py3-none-any.whl
-          aws s3 cp dist/$WHEEL "s3://pirero-gateway-downloads/release/$WHEEL"
-          echo "${{ env.VERSION }}" | aws s3 cp - "s3://pirero-gateway-downloads/release/latest-version"
+          aws s3 cp dist/$WHEEL "s3://dstack-gateway-downloads/release/$WHEEL"
+          echo "${{ env.VERSION }}" | aws s3 cp - "s3://dstack-gateway-downloads/release/latest-version"
