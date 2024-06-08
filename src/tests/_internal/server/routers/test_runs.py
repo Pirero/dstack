@@ -143,7 +143,7 @@ def get_dev_env_run_plan_dict(
                     ],
                     "env": {},
                     "home_dir": "/root",
-                    "image_name": "dstackai/base:py3.8-0.4rc4-cuda-12.1",
+                    "image_name": "truespirit/cuda:12.1.0-base-22.04-py3.12-3-forge",
                     "job_name": f"{run_name}-0-0",
                     "replica_num": 0,
                     "job_num": 0,
