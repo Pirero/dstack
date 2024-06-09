@@ -141,8 +141,8 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         run: |
           VERSION=$((${{ github.run_number }} + ${{ env.BUILD_INCREMENT }}))
-          aws s3 cp . "s3://pirero-runner-downloads-stgn/$VERSION/binaries/" --recursive --exclude "*" --include "dstack-*" --acl public-read
-          aws s3 cp . "s3://pirero-runner-downloads-stgn/latest/binaries/" --recursive --exclude "*" --include "dstack-*" --acl public-read
+          aws s3 cp . "s3://pirero-runner-downloads-stgn/$VERSION/binaries/" --recursive --exclude "*" --include "dstack*" --acl public-read
+          aws s3 cp . "s3://pirero-runner-downloads-stgn/latest/binaries/" --recursive --exclude "*" --include "dstack*" --acl public-read
 
   generate-json-schema:
     #if: github.event.pull_request.head.repo.full_name == github.repository
