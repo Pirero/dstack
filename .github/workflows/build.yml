@@ -134,8 +134,8 @@ jobs:
         with:
           name: dstack.runner
           path: runner
-      - name: Unzip Runner Artifact
-        run: unzip runner/dstack.runner -d runner/          
+      # - name: Unzip Runner Artifact
+      #   run: unzip runner/dstack.runner -d runner/          
       - name: List downloaded files
         run: ls -al runner
       - name: Verify downloaded files
