@@ -135,12 +135,12 @@ jobs:
           name: dstack.runner
           path: runner
       - name: Unzip Runner Artifact
-        run: unzip runner/dstack.runner.zip -d runner/          
+        run: unzip runner/dstack.runner -d runner/          
       - name: List downloaded files
         run: ls -al runner
       - name: Verify downloaded files
         run: |
-          if [ -f "runner/dstack.runner-linux-amd64" ] && [ -f "runner/dstack.shim-linux-amd64" ]; then
+          if [ -f "runner/dstack-runner-linux-amd64" ] && [ -f "runner/dstack-shim-linux-amd64" ]; then
             echo "Files exist and ready for upload."
           else
             echo "Expected files not found."
