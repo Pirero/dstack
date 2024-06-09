@@ -190,20 +190,20 @@ jobs:
       - name: Build and upload to DockerHub
         run: |
           VERSION=${GITHUB_REF#refs/tags/}
-          docker buildx build --platform linux/arm64/v8 --build-arg VERSION=$VERSION --push --provenance=false --tag dstackai/dstack:$VERSION-arm64 -f release/Dockerfile .
-          docker buildx build --platform linux/amd64 --build-arg VERSION=$VERSION --push --provenance=false --tag dstackai/dstack:$VERSION-amd64 -f release/Dockerfile .
-          docker manifest create dstackai/dstack:$VERSION --amend dstackai/dstack:$VERSION-arm64 --amend dstackai/dstack:$VERSION-amd64
-          docker manifest push dstackai/dstack:$VERSION
+          docker buildx build --platform linux/arm64/v8 --build-arg VERSION=$VERSION --push --provenance=false --tag truespirit/dstack:$VERSION-arm64 -f release/Dockerfile .
+          docker buildx build --platform linux/amd64 --build-arg VERSION=$VERSION --push --provenance=false --tag truespirit/dstack:$VERSION-amd64 -f release/Dockerfile .
+          docker manifest create truespirit/dstack:$VERSION --amend truespirit/dstack:$VERSION-arm64 --amend truespirit/dstack:$VERSION-amd64
+          docker manifest push truespirit/dstack:$VERSION
           if [ -n "${{ needs.pypi-upload.outputs.LATEST }}" ]; then
-            docker manifest create dstackai/dstack:latest --amend dstackai/dstack:$VERSION-arm64 --amend dstackai/dstack:$VERSION-amd64
-            docker manifest push dstackai/dstack:latest
+            docker manifest create truespirit/dstack:latest --amend truespirit/dstack:$VERSION-arm64 --amend truespirit/dstack:$VERSION-amd64
+            docker manifest push truespirit/dstack:latest
           fi
       - name: Docker Hub Description
         uses: peter-evans/dockerhub-description@v4
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-          repository: dstackai/dstack
+          repository: truespirit/dstack
           readme-filepath: ./docker/server/README.md
 
   generate-json-schema:

@@ -118,8 +118,8 @@ jobs:
         with:
           name: dstack.runner
           path: |
-            runner/dstack.runner-${{ matrix.goos }}-${{ matrix.goarch }}
-            runner/dstack.shim-${{ matrix.goos }}-${{ matrix.goarch }}
+            runner/dstack-runner-${{ matrix.goos }}-${{ matrix.goarch }}
+            runner/dstack-shim-${{ matrix.goos }}-${{ matrix.goarch }}
           retention-days: 1
 
   runner-upload:
@@ -134,6 +134,18 @@ jobs:
         with:
           name: dstack.runner
           path: runner
+      - name: Unzip Runner Artifact
+        run: unzip runner/dstack.runner.zip -d runner/          
+      - name: List downloaded files
+        run: ls -al runner
+      - name: Verify downloaded files
+        run: |
+          if [ -f "runner/dstack.runner-linux-amd64" ] && [ -f "runner/dstack.shim-linux-amd64" ]; then
+            echo "Files exist and ready for upload."
+          else
+            echo "Expected files not found."
+            exit 1
+          fi          
       - name: Upload to S3
         working-directory: runner
         env:
@@ -141,8 +153,8 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         run: |
           VERSION=$((${{ github.run_number }} + ${{ env.BUILD_INCREMENT }}))
-          aws s3 cp . "s3://pirero-runner-downloads-stgn/$VERSION/binaries/" --recursive --exclude "*" --include "dstack*" --acl public-read
-          aws s3 cp . "s3://pirero-runner-downloads-stgn/latest/binaries/" --recursive --exclude "*" --include "dstack*" --acl public-read
+          aws s3 cp . "s3://pirero-runner-downloads-stgn/$VERSION/binaries/" --recursive --exclude "*" --include "dstack-*" --acl public-read
+          aws s3 cp . "s3://pirero-runner-downloads-stgn/latest/binaries/" --recursive --exclude "*" --include "dstack-*" --acl public-read
 
   generate-json-schema:
     #if: github.event.pull_request.head.repo.full_name == github.repository
